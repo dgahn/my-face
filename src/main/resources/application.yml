@@ -12,3 +12,4 @@ jwt:
   header: Authorization
   secret: ZGdhaG4tdHV0b3JpYWwtZGdhaG4tdHV0b3JpYWwtdGRnYWhuLXR1dG9yaWEtZGdhaG4tdHV0b3JpYWwtZGdhaG4tdHV0b3JpYWwtZGdhaG4tdHV0b3JpYWwtZGdhaG4tdHV0b3JpYWwK
   token-validity-in-seconds: 86400
+  refresh-token-validity-in-seconds: 86400

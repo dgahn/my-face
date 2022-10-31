@@ -11,10 +11,12 @@ class AuthenticationService(
     private val tokenProvider: TokenProvider,
     private val authenticationManagerBuilder: AuthenticationManagerBuilder
 ) {
-    fun authenticate(email: String, password: String): String {
+    fun authenticate(email: String, password: String): Pair<String, String> {
         val authenticationToken = UsernamePasswordAuthenticationToken(email, password)
         val authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken)
         SecurityContextHolder.getContext().authentication = authentication
-        return tokenProvider.createToken(authentication)
+        val accessToken = tokenProvider.createToken(authentication)
+        val refreshToken = tokenProvider.issueRefreshToken(authenticationToken)
+        return accessToken to refreshToken
     }
 }

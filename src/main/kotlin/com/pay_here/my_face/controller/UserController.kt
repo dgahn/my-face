@@ -6,9 +6,6 @@ import com.pay_here.my_face.controller.dto.SignInRequestDto
 import com.pay_here.my_face.controller.dto.SignInResponseDto
 import com.pay_here.my_face.controller.dto.SignUpRequestDto
 import com.pay_here.my_face.controller.dto.SignUpResponseDto
-import com.pay_here.my_face.security.jwt.JwtFilter
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -28,9 +25,7 @@ class UserController(
 
     @PostMapping("/v1/sign-in")
     fun signIn(@RequestBody signInRequestDto: SignInRequestDto): ResponseEntity<SignInResponseDto> {
-        val jwt = authenticationService.authenticate(signInRequestDto.email, signInRequestDto.password)
-        val httpHeaders = HttpHeaders()
-        httpHeaders.add(JwtFilter.AUTHORIZATION_HEADER, "Bearer $jwt")
-        return ResponseEntity(SignInResponseDto(jwt), httpHeaders, HttpStatus.OK)
+        val tokens = authenticationService.authenticate(signInRequestDto.email, signInRequestDto.password)
+        return ResponseEntity.ok(SignInResponseDto.of(tokens.first, tokens.second))
     }
 }

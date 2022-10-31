@@ -18,4 +18,7 @@ Content-Type: application/json
   "password": "123"
 }
 
-> {% client.global.set("auth_token", response.body.token); %}
+> {%
+client.global.set("accessToken", response.body.accessToken);
+client.global.set("refreshToken", response.body.refreshToken);
+%}

@@ -1,5 +1,7 @@
 package com.pay_here.my_face.security.jwt
 
+import com.pay_here.my_face.domain.RefreshToken
+import com.pay_here.my_face.domain.RefreshTokenJpaRepository
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.MalformedJwtException
@@ -11,25 +13,32 @@ import io.jsonwebtoken.security.SecurityException
 import mu.KotlinLogging
 import org.springframework.beans.factory.InitializingBean
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.User
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import java.security.Key
 import java.util.Date
 
 @Component
 class TokenProvider(
     @Value("\${jwt.secret}") private val secret: String,
-    @Value("\${jwt.token-validity-in-seconds}") tokenValidityInSeconds: Long
+    @Value("\${jwt.token-validity-in-seconds}") tokenValidityInSeconds: Long,
+    @Value("\${jwt.refresh-token-validity-in-seconds}") refreshTokenValidityInSeconds: Long,
+    private val refreshTokenJpaRepository: RefreshTokenJpaRepository
 ) : InitializingBean {
     private val tokenValidityInMilliseconds: Long
+    private val refreshTokenValidityInMilliseconds: Long
     private lateinit var key: Key
 
     init {
         tokenValidityInMilliseconds = tokenValidityInSeconds * SEC_TO_MILLI_SEC
+        refreshTokenValidityInMilliseconds = refreshTokenValidityInSeconds * SEC_TO_MILLI_SEC
     }
 
     override fun afterPropertiesSet() {
@@ -78,6 +87,46 @@ class TokenProvider(
             logger.info { "JWT 토큰이 잘못되었습니다." }
         }
         return false
+    }
+
+    @Transactional
+    fun reissueRefreshToken(refreshToken: String): String {
+        val authentication = getAuthentication(refreshToken!!)
+        val findRefreshToken = refreshTokenJpaRepository.findByIdOrNull(authentication.name)
+            ?: throw UsernameNotFoundException("존재하지 않는 이메일입니다. ${authentication.name}")
+        return if (findRefreshToken.token == refreshToken) {
+            val newRefreshToken = createRefreshToken(authentication)
+            findRefreshToken.changeToken(newRefreshToken)
+            newRefreshToken
+        } else {
+            logger.info { "refresh 토큰이 일치하지 않습니다. " }
+            findRefreshToken.token
+        }
+    }
+
+    @Transactional
+    fun issueRefreshToken(authentication: Authentication): String {
+        val newRefreshToken = createRefreshToken(authentication)
+
+        val refreshToken = refreshTokenJpaRepository.findByIdOrNull(authentication.name)
+        if (refreshToken != null) {
+            refreshToken.changeToken(newRefreshToken)
+        } else {
+            refreshTokenJpaRepository.save(RefreshToken(authentication.name, newRefreshToken))
+        }
+
+        return newRefreshToken
+    }
+
+    private fun createRefreshToken(authentication: Authentication): String {
+        val now = Date()
+        val validity = Date(now.time + refreshTokenValidityInMilliseconds)
+        return Jwts.builder()
+            .setSubject(authentication.name)
+            .setIssuedAt(now)
+            .signWith(key, SignatureAlgorithm.HS512)
+            .setExpiration(validity)
+            .compact()
     }
 
     companion object {

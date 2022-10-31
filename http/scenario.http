@@ -1,0 +1,10 @@
+## 회원가입
+POST http://localhost:8080/v1/sign-up
+Content-Type: application/json
+
+{
+  "email": "dgahn@icloud.com",
+  "password": "123"
+}
+
+###

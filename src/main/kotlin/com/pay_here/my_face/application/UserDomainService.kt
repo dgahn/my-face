@@ -5,6 +5,7 @@ import com.pay_here.my_face.domain.UserJpaRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class UserDomainService(
@@ -19,6 +20,7 @@ class UserDomainService(
         )
     }
 
+    @Transactional(readOnly = true)
     fun existByEmail(email: String): Boolean {
         val user = userJpaRepository.findByIdOrNull(email)
         return user != null

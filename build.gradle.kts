@@ -7,7 +7,7 @@ plugins {
     kotlin("plugin.allopen") version "1.6.10"
     kotlin("plugin.serialization") version "1.6.10"
     id("org.springframework.boot") version "2.7.5"
-    id("io.spring.dependency-management") version "1.0.11.RELEASE"
+    id("io.spring.dependency-management") version "1.1.0"
     id("io.gitlab.arturbosch.detekt") version "1.18.0"
     id("org.jmailen.kotlinter") version "3.6.0"
 }
@@ -16,6 +16,7 @@ group = "me.dgahn"
 version = "0.1.0"
 
 repositories {
+    google()
     mavenCentral()
 }
 
@@ -43,6 +44,13 @@ kotlinter {
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+    implementation("io.jsonwebtoken:jjwt-impl:0.11.5")
+    implementation("io.jsonwebtoken:jjwt-jackson:0.11.5")
+    implementation("io.github.microutils:kotlin-logging-jvm:3.0.2")
+    implementation("mysql:mysql-connector-java:8.0.31")
+    runtimeOnly("org.jetbrains.kotlin:kotlin-reflect:1.6.21")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 }
 

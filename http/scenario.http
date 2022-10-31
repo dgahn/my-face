@@ -8,3 +8,14 @@ Content-Type: application/json
 }
 
 ###
+## 로그인
+POST http://localhost:8080/v1/sign-in
+Content-Type: application/json
+
+
+{
+  "email": "dgahn@icloud.com",
+  "password": "123"
+}
+
+> {% client.global.set("auth_token", response.body.token); %}

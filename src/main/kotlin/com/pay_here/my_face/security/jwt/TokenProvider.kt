@@ -71,27 +71,30 @@ class TokenProvider(
     }
 
     @Suppress("SwallowedException")
-    fun validateToken(token: String?): Boolean {
-        try {
+    fun validateToken(token: String): JwtStatus {
+        return try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token)
-            return true
+            JwtStatus.ACCESS
+        } catch (e: ExpiredJwtException) {
+            JwtStatus.EXPIRED
         } catch (e: SecurityException) {
             logger.info { "잘못된 JWT 서명입니다." }
+            JwtStatus.DENIED
         } catch (e: MalformedJwtException) {
             logger.info { "잘못된 JWT 서명입니다." }
-        } catch (e: ExpiredJwtException) {
-            logger.info { "만료된 JWT 토큰입니다." }
+            JwtStatus.DENIED
         } catch (e: UnsupportedJwtException) {
             logger.info { "지원되지 않는 JWT 토큰입니다." }
+            JwtStatus.DENIED
         } catch (e: IllegalArgumentException) {
             logger.info { "JWT 토큰이 잘못되었습니다." }
+            JwtStatus.DENIED
         }
-        return false
     }
 
     @Transactional
     fun reissueRefreshToken(refreshToken: String): String {
-        val authentication = getAuthentication(refreshToken!!)
+        val authentication = getAuthentication(refreshToken)
         val findRefreshToken = refreshTokenJpaRepository.findByIdOrNull(authentication.name)
             ?: throw UsernameNotFoundException("존재하지 않는 이메일입니다. ${authentication.name}")
         return if (findRefreshToken.token == refreshToken) {

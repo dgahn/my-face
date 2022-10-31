@@ -12,7 +12,6 @@ Content-Type: application/json
 POST http://localhost:8080/v1/sign-in
 Content-Type: application/json
 
-
 {
   "email": "dgahn@icloud.com",
   "password": "123"
@@ -22,3 +21,16 @@ Content-Type: application/json
 client.global.set("accessToken", response.body.accessToken);
 client.global.set("refreshToken", response.body.refreshToken);
 %}
+
+###
+
+## 로그 아웃
+
+POST http://localhost:8080/v1/sign-out
+Authorization: {{accessToken}}
+Refresh: {{refreshToken}}
+Content-Type: application/json
+
+{
+  "email": "dgahn@icloud.com"
+}

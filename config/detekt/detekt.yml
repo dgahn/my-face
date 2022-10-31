@@ -453,7 +453,7 @@ naming:
     excludes: ['**/*.kts']
     rootPackage: ''
   MatchingDeclarationName:
-    active: true
+    active: false
     mustBeFirst: true
   MemberNameEqualsClassName:
     active: true

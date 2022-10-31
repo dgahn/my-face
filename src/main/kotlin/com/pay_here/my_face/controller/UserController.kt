@@ -4,6 +4,7 @@ import com.pay_here.my_face.application.AuthenticationService
 import com.pay_here.my_face.application.UserApplicationService
 import com.pay_here.my_face.controller.dto.SignInRequestDto
 import com.pay_here.my_face.controller.dto.SignInResponseDto
+import com.pay_here.my_face.controller.dto.SignOutRequestDto
 import com.pay_here.my_face.controller.dto.SignUpRequestDto
 import com.pay_here.my_face.controller.dto.SignUpResponseDto
 import org.springframework.http.ResponseEntity
@@ -27,5 +28,10 @@ class UserController(
     fun signIn(@RequestBody signInRequestDto: SignInRequestDto): ResponseEntity<SignInResponseDto> {
         val tokens = authenticationService.authenticate(signInRequestDto.email, signInRequestDto.password)
         return ResponseEntity.ok(SignInResponseDto.of(tokens.first, tokens.second))
+    }
+
+    @PostMapping("/v1/sign-out")
+    fun signOut(@RequestBody signOutRequestDto: SignOutRequestDto) {
+        userApplicationService.signOut(signOutRequestDto.email)
     }
 }

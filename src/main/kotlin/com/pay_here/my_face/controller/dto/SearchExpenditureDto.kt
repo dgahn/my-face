@@ -3,7 +3,7 @@ package com.pay_here.my_face.controller.dto
 import com.pay_here.my_face.domain.Expenditure
 import java.time.Instant
 
-data class SearchExpenditureResponseDto(
+data class SearchExpenditureDto(
     val id: Long,
     val money: Long,
     val memo: String,
@@ -12,8 +12,8 @@ data class SearchExpenditureResponseDto(
     val updatedAt: Instant
 ) {
     companion object {
-        fun of(expenditure: Expenditure): SearchExpenditureResponseDto {
-            return SearchExpenditureResponseDto(
+        fun of(expenditure: Expenditure): SearchExpenditureDto {
+            return SearchExpenditureDto(
                 id = expenditure.id,
                 money = expenditure.money,
                 memo = expenditure.memo,

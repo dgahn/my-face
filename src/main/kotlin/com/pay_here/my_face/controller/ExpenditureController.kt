@@ -3,7 +3,7 @@ package com.pay_here.my_face.controller
 import com.pay_here.my_face.application.ExpenditureApplicationService
 import com.pay_here.my_face.controller.dto.CreateExpenditureRequestDto
 import com.pay_here.my_face.controller.dto.CreateExpenditureResponseDto
-import com.pay_here.my_face.controller.dto.SearchExpenditureResponseDto
+import com.pay_here.my_face.controller.dto.SearchExpenditureDto
 import com.pay_here.my_face.controller.dto.UpdateExpenditureRequestDto
 import com.pay_here.my_face.controller.dto.UpdateExpenditureResponseDto
 import com.pay_here.my_face.resolver.UserDto
@@ -42,11 +42,11 @@ class ExpenditureController(
         @RequestParam(required = false, defaultValue = "false") isDeleted: Boolean,
         @RequestParam(required = false, defaultValue = "1") @Min(PAGING_MIN) @Max(PAGING_MAX) page: Int,
         @RequestParam(required = false, defaultValue = "10") @Min(PAGING_MIN) @Max(PAGING_MAX) size: Int,
-    ): ResponseEntity<List<SearchExpenditureResponseDto>> {
+    ): ResponseEntity<List<SearchExpenditureDto>> {
         // ToDo 식별자로 정렬 추가 필요
         return ResponseEntity.ok(
             expenditureApplicationService.search(email, isDeleted, page, size, userDto)
-                .map { SearchExpenditureResponseDto.of(it) }
+                .map { SearchExpenditureDto.of(it) }
         )
     }
 

@@ -55,6 +55,12 @@ Content-Type: application/json
 }
 
 ###
+## 가계부 삭제
+DELETE http://localhost:8080/v1/expenditures/1
+Authorization: {{accessToken}}
+Refresh: {{refreshToken}}
+
+###
 ## 로그 아웃
 
 POST http://localhost:8080/v1/sign-out

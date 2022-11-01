@@ -18,15 +18,23 @@ class ExpenditureApplicationService(
     }
 
     @Transactional(readOnly = true)
-    fun search(email: String, page: Int, size: Int): List<Expenditure> {
-        return expenditureJpaRepository.findAllByEmail(email, PageRequest.of(page - 1, size))
+    fun search(email: String, isDeleted: Boolean, page: Int, size: Int): List<Expenditure> {
+        return expenditureJpaRepository.findAllByEmailAndIsDeleted(email, isDeleted, PageRequest.of(page - 1, size))
     }
 
     @Transactional
     fun updateExpenditure(id: Long, money: Long, memo: String): Expenditure {
-        val expenditure =
-            expenditureJpaRepository.findByIdOrNull(id) ?: throw IllegalArgumentException("지출내역이 존재하지 않습니다. (id: $id)")
+        val expenditure = getById(id)
         expenditure.update(memo, money)
         return expenditure
     }
+
+    @Transactional
+    fun deleteExpenditure(id: Long) {
+        val expenditure = getById(id)
+        expenditure.delete()
+    }
+
+    private fun getById(id: Long): Expenditure =
+        expenditureJpaRepository.findByIdOrNull(id) ?: throw IllegalArgumentException("지출내역이 존재하지 않습니다. (id: $id)")
 }

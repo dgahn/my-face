@@ -38,9 +38,16 @@ class Expenditure(
             field = value
         }
 
+    var isDeleted: Boolean = false
+        protected set
+
     fun update(memo: String, money: Long) {
         this.memo = memo
         this.money = money
+    }
+
+    fun delete() {
+        isDeleted = true
     }
 
     companion object {

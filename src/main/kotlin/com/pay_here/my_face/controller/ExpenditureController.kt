@@ -60,6 +60,13 @@ class ExpenditureController(
         return ResponseEntity.ok(UpdateExpenditureResponseDto(updatedExpenditure.id))
     }
 
+    @PutMapping("/v1/expenditures/{id}/recovery")
+    fun recoveryExpenditure(
+        @PathVariable("id") id: Long
+    ) {
+        expenditureApplicationService.recoveryExpenditure(id)
+    }
+
     @DeleteMapping("/v1/expenditures/{id}")
     fun deleteExpenditure(
         @PathVariable("id") id: Long

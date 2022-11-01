@@ -37,4 +37,10 @@ class ExpenditureApplicationService(
 
     private fun getById(id: Long): Expenditure =
         expenditureJpaRepository.findByIdOrNull(id) ?: throw IllegalArgumentException("지출내역이 존재하지 않습니다. (id: $id)")
+
+    @Transactional
+    fun recoveryExpenditure(id: Long) {
+        val expenditure = getById(id)
+        expenditure.recovery()
+    }
 }

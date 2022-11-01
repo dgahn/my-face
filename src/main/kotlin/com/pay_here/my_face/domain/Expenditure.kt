@@ -50,6 +50,10 @@ class Expenditure(
         isDeleted = true
     }
 
+    fun recovery() {
+        isDeleted = false
+    }
+
     companion object {
         private const val MIN_MONEY = 1
     }

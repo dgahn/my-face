@@ -23,7 +23,7 @@ client.global.set("refreshToken", response.body.refreshToken);
 %}
 
 ###
-## 가계부 작성
+## 지출 내역 작성
 POST http://localhost:8080/v1/expenditures
 Authorization: {{accessToken}}
 Refresh: {{refreshToken}}
@@ -36,13 +36,13 @@ Content-Type: application/json
 }
 
 ###
-## 가계부 조회
+## 지출 내역 조회
 GET http://localhost:8080/v1/expenditures?email=dgahn@icloud.com&page=1&size=10
 Authorization: {{accessToken}}
 Refresh: {{refreshToken}}
 
 ###
-## 가계부 수정
+## 지출 내역 수정
 PUT http://localhost:8080/v1/expenditures/1
 Authorization: {{accessToken}}
 Refresh: {{refreshToken}}
@@ -55,8 +55,14 @@ Content-Type: application/json
 }
 
 ###
-## 가계부 삭제
+## 지출 내역 삭제
 DELETE http://localhost:8080/v1/expenditures/1
+Authorization: {{accessToken}}
+Refresh: {{refreshToken}}
+
+###
+## 지출 내역 복구
+PUT http://localhost:8080/v1/expenditures/1/recovery
 Authorization: {{accessToken}}
 Refresh: {{refreshToken}}
 

@@ -35,6 +35,12 @@ Content-Type: application/json
   "memo": "메모메모메모메모"
 }
 
+###
+## 가계부 조회
+GET http://localhost:8080/v1/expenditures?email=dgahn@icloud.com&page=1&size=10
+Authorization: {{accessToken}}
+Refresh: {{refreshToken}}
+
 
 ###
 ## 로그 아웃

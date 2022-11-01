@@ -6,6 +6,7 @@ import com.pay_here.my_face.controller.dto.CreateExpenditureResponseDto
 import com.pay_here.my_face.controller.dto.SearchExpenditureResponseDto
 import com.pay_here.my_face.controller.dto.UpdateExpenditureRequestDto
 import com.pay_here.my_face.controller.dto.UpdateExpenditureResponseDto
+import com.pay_here.my_face.resolver.UserDto
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -27,14 +28,16 @@ class ExpenditureController(
 
     @PostMapping("/v1/expenditures")
     fun createExpenditure(
+        userDto: UserDto,
         @RequestBody request: CreateExpenditureRequestDto
     ): ResponseEntity<CreateExpenditureResponseDto> {
-        val expenditure = expenditureApplicationService.createExpenditure(request.toEntity())
+        val expenditure = expenditureApplicationService.createExpenditure(request.toEntity(), userDto)
         return ResponseEntity.ok(CreateExpenditureResponseDto(expenditure.id))
     }
 
     @GetMapping("/v1/expenditures")
     fun getExpenditures(
+        userDto: UserDto,
         @RequestParam email: String,
         @RequestParam(required = false, defaultValue = "false") isDeleted: Boolean,
         @RequestParam(required = false, defaultValue = "1") @Min(PAGING_MIN) @Max(PAGING_MAX) page: Int,
@@ -42,36 +45,40 @@ class ExpenditureController(
     ): ResponseEntity<List<SearchExpenditureResponseDto>> {
         // ToDo 식별자로 정렬 추가 필요
         return ResponseEntity.ok(
-            expenditureApplicationService.search(email, isDeleted, page, size)
+            expenditureApplicationService.search(email, isDeleted, page, size, userDto)
                 .map { SearchExpenditureResponseDto.of(it) }
         )
     }
 
     @PutMapping("/v1/expenditures/{id}")
     fun updateExpenditure(
+        userDto: UserDto,
         @PathVariable("id") id: Long,
         @RequestBody request: UpdateExpenditureRequestDto
     ): ResponseEntity<UpdateExpenditureResponseDto> {
         val updatedExpenditure = expenditureApplicationService.updateExpenditure(
             id,
             request.money,
-            request.memo
+            request.memo,
+            userDto,
         )
         return ResponseEntity.ok(UpdateExpenditureResponseDto(updatedExpenditure.id))
     }
 
     @PutMapping("/v1/expenditures/{id}/recovery")
     fun recoveryExpenditure(
+        userDto: UserDto,
         @PathVariable("id") id: Long
     ) {
-        expenditureApplicationService.recoveryExpenditure(id)
+        expenditureApplicationService.recoveryExpenditure(id, userDto)
     }
 
     @DeleteMapping("/v1/expenditures/{id}")
     fun deleteExpenditure(
+        userDto: UserDto,
         @PathVariable("id") id: Long
     ) {
-        expenditureApplicationService.deleteExpenditure(id)
+        expenditureApplicationService.deleteExpenditure(id, userDto)
     }
 
     companion object {

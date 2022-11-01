@@ -67,6 +67,19 @@ Authorization: {{accessToken}}
 Refresh: {{refreshToken}}
 
 ###
+## 지출 내역 작성(다른 이메일로 작성시)
+POST http://localhost:8080/v1/expenditures
+Authorization: {{accessToken}}
+Refresh: {{refreshToken}}
+Content-Type: application/json
+
+{
+  "email": "dgahn1@icloud.com",
+  "money": 1000,
+  "memo": "메모메모메모메모"
+}
+
+###
 ## 로그 아웃
 
 POST http://localhost:8080/v1/sign-out

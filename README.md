@@ -15,20 +15,13 @@
    - 가계부에서 `상세한 세부 내역`을 볼 수 있습니다.
 4. 로그인하지 않은 고객은 `가계부 내역에 대한 접근 제한` 처리가 되어야 합니다.
 
-## API 명세
-
-### 회원가입 API
-```
-POST /v1/sign-up
-```
-
-### 로그인 API
-```
-POST /v1/sign-in
-```
-
-### 로그아웃 API
-```
-POST /v1/sign-out
-```
-
+## 구현
+- 언어에 상관없이 Docker를 기반으로 서버를 실행 할 수 있도록 작성한다.
+  - `/docker/Dockerfile`에 DockerFile이 존재
+  - `/.github/workflow/release.yaml`에 github action을 통해 빌드 되도록 설정함.
+- DB 관련 테이블에 대한 DDL 파일
+  - `/database`에 DDL 존재
+- 토큰을 발행해서 인증을 제어하는 방식
+  - JWT token 방식 사용
+  - access token과 refresh token을 사용
+- 테스트 파일은 `/http/scenario.http`에 존재

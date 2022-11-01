@@ -2,6 +2,7 @@ package com.pay_here.my_face.security.jwt
 
 import com.pay_here.my_face.domain.RefreshToken
 import com.pay_here.my_face.domain.RefreshTokenJpaRepository
+import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.MalformedJwtException
@@ -55,6 +56,14 @@ class TokenProvider(
             .signWith(key, SignatureAlgorithm.HS512)
             .setExpiration(validity)
             .compact()
+    }
+
+    fun parseTokenBody(token: String): Claims {
+        return Jwts.parserBuilder()
+            .setSigningKey(key)
+            .build()
+            .parseClaimsJws(token)
+            .body
     }
 
     fun getAuthentication(token: String): Authentication {

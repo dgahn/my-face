@@ -1,5 +1,9 @@
 package com.pay_here.my_face.security.jwt
 
+import com.pay_here.my_face.util.AUTHORIZATION_HEADER
+import com.pay_here.my_face.util.REFRESH_HEADER
+import com.pay_here.my_face.util.resolveToken
+import com.pay_here.my_face.util.setTokenHeader
 import mu.KotlinLogging
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
@@ -22,7 +26,7 @@ class JwtFilter(private val tokenProvider: TokenProvider) : OncePerRequestFilter
     }
 
     private fun processingAccessToken(request: HttpServletRequest): JwtStatus {
-        val accessToken = resolveToken(request, AUTHORIZATION_HEADER)
+        val accessToken = request.resolveToken(AUTHORIZATION_HEADER)
         val accessTokenStatus = tokenProvider.validateToken(accessToken)
         if (accessTokenStatus == JwtStatus.ACCESS) {
             val authentication = tokenProvider.getAuthentication(accessToken)
@@ -39,7 +43,7 @@ class JwtFilter(private val tokenProvider: TokenProvider) : OncePerRequestFilter
         response: HttpServletResponse
     ) {
         if (accessTokenStatus == JwtStatus.EXPIRED) {
-            val refreshToken = resolveToken(request, REFRESH_HEADER)
+            val refreshToken = request.resolveToken(REFRESH_HEADER)
             if (tokenProvider.validateToken(refreshToken) === JwtStatus.ACCESS) {
                 val newRefresh = tokenProvider.reissueRefreshToken(refreshToken)
                 response.setTokenHeader(REFRESH_HEADER, newRefresh)
@@ -51,23 +55,7 @@ class JwtFilter(private val tokenProvider: TokenProvider) : OncePerRequestFilter
         }
     }
 
-    private fun resolveToken(request: HttpServletRequest, header: String): String {
-        val bearerToken = runCatching { request.getHeader(header) }.getOrNull()
-        require(bearerToken != null && bearerToken.startsWith(TOKEN_PREFIX)) {
-            "header에 ${header}값이 존재하지 않습니다."
-        }
-        return bearerToken.substring(BEARER_TOKEN_START_INDEX)
-    }
-
-    private fun HttpServletResponse.setTokenHeader(header: String, token: String) {
-        this.setHeader(header, "$TOKEN_PREFIX $token")
-    }
-
     companion object {
-        const val AUTHORIZATION_HEADER = "Authorization"
-        private const val REFRESH_HEADER = "Refresh"
-        private const val TOKEN_PREFIX = "Bearer "
-        private const val BEARER_TOKEN_START_INDEX = 7
         private val logger = KotlinLogging.logger { }
     }
 }

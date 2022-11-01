@@ -74,4 +74,13 @@ tasks {
     withType<Detekt> {
         dependsOn(formatKotlin)
     }
+    bootJar {
+        archiveFileName.set("api-server.jar")
+        doLast {
+            copy {
+                from("build/libs/api-server.jar")
+                into("docker/server")
+            }
+        }
+    }
 }

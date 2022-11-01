@@ -4,10 +4,14 @@ import com.pay_here.my_face.application.ExpenditureApplicationService
 import com.pay_here.my_face.controller.dto.CreateExpenditureRequestDto
 import com.pay_here.my_face.controller.dto.CreateExpenditureResponseDto
 import com.pay_here.my_face.controller.dto.SearchExpenditureResponseDto
+import com.pay_here.my_face.controller.dto.UpdateExpenditureRequestDto
+import com.pay_here.my_face.controller.dto.UpdateExpenditureResponseDto
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
@@ -39,6 +43,19 @@ class ExpenditureController(
             expenditureApplicationService.search(email, page, size)
                 .map { SearchExpenditureResponseDto.of(it) }
         )
+    }
+
+    @PutMapping("/v1/expenditures/{id}")
+    fun updateExpenditure(
+        @PathVariable("id") id: Long,
+        @RequestBody request: UpdateExpenditureRequestDto
+    ): ResponseEntity<UpdateExpenditureResponseDto> {
+        val updatedExpenditure = expenditureApplicationService.updateExpenditure(
+            id,
+            request.money,
+            request.memo
+        )
+        return ResponseEntity.ok(UpdateExpenditureResponseDto(updatedExpenditure.id))
     }
 
     companion object {

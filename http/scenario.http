@@ -41,6 +41,18 @@ GET http://localhost:8080/v1/expenditures?email=dgahn@icloud.com&page=1&size=10
 Authorization: {{accessToken}}
 Refresh: {{refreshToken}}
 
+###
+## 가계부 수정
+PUT http://localhost:8080/v1/expenditures/1
+Authorization: {{accessToken}}
+Refresh: {{refreshToken}}
+Content-Type: application/json
+
+{
+  "email": "dgahn@icloud.com",
+  "money": 1000,
+  "memo": "메모메모메모메모11111111111111111111"
+}
 
 ###
 ## 로그 아웃

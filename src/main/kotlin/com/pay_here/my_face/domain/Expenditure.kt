@@ -16,9 +16,9 @@ class Expenditure(
     @Id
     @GeneratedValue
     val id: Long = 0,
-    val money: Long,
-    val memo: String,
-    val email: String
+    val email: String,
+    memo: String,
+    money: Long
 ) {
     @CreatedDate
     @Column(updatable = false)
@@ -28,4 +28,22 @@ class Expenditure(
     @LastModifiedDate
     var updatedAt: Instant? = null
         protected set
+
+    var memo: String = memo
+        protected set
+
+    var money: Long = money
+        protected set(value) {
+            check(value >= MIN_MONEY) { "돈은 항상 ${MIN_MONEY}원 이상이여야 합니다." }
+            field = value
+        }
+
+    fun update(memo: String, money: Long) {
+        this.memo = memo
+        this.money = money
+    }
+
+    companion object {
+        private const val MIN_MONEY = 1
+    }
 }
